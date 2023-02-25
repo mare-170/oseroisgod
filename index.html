@@ -1,0 +1,750 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>簡単なオセロ</title>
+<style type="text/css">
+<!--
+pre {
+font-family: "ＭＳ ゴシック","MS Gothic",Sans-Serif;
+}
+-->
+</style>
+	<script type="text/javascript">
+		// オセロゲームの入り口
+		//
+		// オセロゲームのプログラムのための、
+		// ボードとその表示のプログラム。
+		//
+		// ゲームができるように、以下のステップに沿って機能を追加する。
+		// (1) 置き場所を入力したら、ルールに沿ってその周辺のコマを裏返し
+		//     する処理をプログラムせよ。裏返しがない場合は、再入力させる。
+		// (2) 入力し勝敗が決まってゲーム終了であれば、
+		//     勝敗を表示しプログラムを終了させる。
+
+		// **********
+		// *        * ((board の初期状態))
+		// *        *
+		// *        * コマの連続判定では、
+		// *   xo   * 外周判定を i < 0 とか i > 8 だと
+		// *   ox   * プログラムが繁雑になるので、
+		// *        * ボードは、8x8より2つ大きくし、
+		// *        * 外周に壁を表すデータを配置しておく。
+		// *        *
+		// **********
+
+		// 定数--------------------------------
+		const BoardSize = 8 ;
+		const Wall  = "■" ;
+		const Black = "●" ;
+		const White = "○" ;
+		const None  = "□" ;
+        const Red = "🔸" ;
+		// 大域
+		var board = [] ;
+		var obj = Black ;
+
+		// 盤の初期化--------------------------
+		// <body onLoad="initialize()">...で
+		// 最初に実行される初期化処理
+		function initialize() {
+			let i , j ;
+			for( i = 0 ; i < BoardSize+2 ; i++ ) {
+				board[i] = [] ;
+				for( j = 0 ; j < BoardSize+2 ; j++ )
+				board[i][j] = None ;
+			}
+			for( i = 0 ; i < BoardSize+2 ; i++ ) {
+				board[0][i] = Wall ;
+				board[BoardSize+1][i] = Wall ;
+				board[i][0] = Wall ;
+				board[i][BoardSize+1] = Wall ;
+			}
+			board[4][4] = Black ;
+			board[4][5] = White ;
+			board[5][4] = White ;
+			board[5][5] = Black ;
+			// 最初の盤面を表示
+			board_display() ;
+		}
+
+
+		// 盤の表示----------------------------
+		function board_display() {
+			let i , j ;
+			let text = "<pre>\n" ;
+			text += "次の駒は"+obj+"\n" ;
+			text += "  " ;
+			for( i = 1 ; i <= BoardSize ; i++ ) {
+				text += (" "+i).slice(-2) ;
+			}
+			text += " (X)\n" ;
+			for( i = 1 ; i <= BoardSize ; i++ ) {
+				text += (" "+i).slice(-2) ;
+				for( j = 1 ; j <= BoardSize ; j++ ) {
+					text += board[j][i] ;
+				}
+				text += "\n" ;
+			}
+			text += "(Y)\n" ;
+			text += "</pre>\n" ;
+			document.getElementById("BOARD").innerHTML = text ;
+		}
+
+
+		// 盤に置く----------------------------
+		// <input....onClick="exec()">により呼び出される
+		function exec() {
+			// input
+			let x = parseInt( document.input.X.value , 10 ) ;
+			let y = parseInt( document.input.Y.value , 10 ) ;
+			/*
+            let pos = {};
+            let cnt = 0; // 可能性の数
+            let a = '';
+            let fact = '';
+            let nx='';
+            let ny='';
+
+            fact = board[x][y];
+			*/
+
+			let cntx = 0; // ひっくり返すの数
+			let cnty = 0;
+			let cnt = 0;
+			let d = [];// 方向記録用
+			var Finish = false;
+			
+			var vx, vy;
+
+			if (Finish) {
+
+			} else {
+
+			console.log('Hello')
+
+            
+			// 盤面に駒を置く
+
+            // 置ける場所の判定・検索
+			/* mark2 */
+			judge();
+			
+
+			// プレーヤー反転
+
+
+			if (board[x][y] == Red) {
+				judge2();
+				if (obj == Black) {
+					
+					board[x][y] = Black;						
+					console.log('BlackPutPoint:', x, ':', y);
+					obj = White ;
+                    console.log('          Player: White');
+					format();
+
+				} else if (obj == White) {
+					
+					board[x][y] = White;					
+					console.log('WhiePutPoint:', x, ':', y);
+					obj = Black ;
+                    console.log('           Player: Black');
+					format();
+					
+				}
+
+			} else {
+				if ( obj == Black ) {
+					obj = Black;
+					console.log('No way! Player: Black');
+                } else {
+					obj = White;
+					console.log('No way! Player: White');
+				}
+
+			}
+			finish();
+			judge();
+			console.log('終了');
+
+		}
+
+
+			function judge2() {
+				if (obj == White) {
+				// offense White 攻め
+						// find Black
+							console.log('Start i, j', i, ':', j);
+							// クリア
+
+
+							for (var dx=-1; dx<2; dx++) { // dx (direction X) 移動方向 X軸
+								for (var dy=-1; dy<2; dy++) {
+									vx = x+dx;
+									vy = y+dy;
+
+									console.log('頭がおかしくなりました。');
+
+									
+
+
+
+									if (board[vx][vy] == Black) {									
+										console.log('White find Black:', vx, ':', vy);
+
+										while (true) {
+											if (board[vx][vy] == White) {	
+												console.log('あ');
+												/*											
+												cnt[vx-x*dx][vy-y*dy]
+												cntx = vx-x*dx;
+												cnty = vy-y*dy;
+												*/
+												console.log('Points:', vx, vy);
+												console.log('d= ',dx,',', dy );
+												console.log('i,j=', x+dx, ',', y+dy);
+
+
+												if (dx == 0) {
+													
+													for (var j=y+dy; j<vy; j=j+dy) {
+														console.log('白ふぉｒｒ');
+														if (board[x][j] == Black) {
+															console.log('い');
+															board[x][j] = White;
+														} else {
+															console.log('黒ねえから');
+														}
+
+														
+
+													}
+													
+												} else if (dy ==0) {
+													
+													for (var i=x+dx; i<vx; i=i+dx) {													
+													console.log('白ふぉｒｒ');
+													if (board[i][y] == Black) {
+														console.log('い');
+														board[i][y] = White;
+													} else {
+														console.log('黒ねえから');
+													}
+												}
+
+												} else {
+													for (var i=x+dx; i<vx; i=i+dx) {
+													for (var j=y+dy; j<vy; j=j+dy) {
+														console.log('白ふぉｒｒ');
+														if (board[i][j] == Black) {
+															console.log('い');
+															board[i][j] = White;
+														} else {
+															console.log('黒ねえから');
+														}
+
+														
+
+													}
+												}
+
+												}
+
+
+												
+
+
+												/*
+												if (board[i-dx][j-dy] == None) {
+											う		board[i-dx][j-dy] = Red;
+													console.log('     RED', i-dx, ':', j-dy);
+												}
+												*/
+												
+												break;
+											} else if (board[vx][vy] == Wall) {
+												console.log('う');	
+												break;
+											}
+											vx += dx;
+											vy += dy;
+
+											
+											
+										}
+									} 
+									/*else if (board[vx][vy] == White) {
+										 
+										if (board[i-dx][i-dy] == None) {
+											board[i-dx][j-dy] = Red;
+											console.log('Points:', vx, ':', vy);
+											console.log('     RED', i-dx, j-dy);
+										}
+										
+									}*/
+								}console.log('----------------------------------------');
+
+							}
+
+						
+
+
+					
+
+				
+				} else if (obj == Black) {
+					// offense Black 攻め
+						// find White
+							console.log('start i, j', x, ':', y);
+							// クリア
+
+							for (var dx=-1; dx<2; dx++) { // dx (direction X) 移動方向 X軸
+								for (var dy=-1; dy<2; dy++) {
+									vx = x+dx;
+									vy = y+dy;
+									console.log('頭がおかしくなりました。');
+
+
+
+									if (board[vx][vy] == White) {									
+										console.log('Black find White:', vx, ':', vy);
+
+										while (true) {
+											if (board[vx][vy] == Black) {
+												console.log('あ');	
+												/*											
+												cnt[vx-x*dx][vy-y*dy]
+												cntx = vx-x*dx;
+												cnty = vy-y*dy;
+												*/
+												console.log('Points:', vx, vy);
+												console.log('d= ', dx, ',', dy);
+												console.log('i,j=', x+dx, ',', y+dy);
+
+
+												if (dx == 0) {
+													
+													for (var j=y+dy; j<vy; j=j+dy) {
+														console.log('黒ふぉｒｒ');
+														if (board[x][j] == White) {
+															console.log('い');
+															board[x][j] = Black;
+														} else {
+															console.log('白ねえから');
+														}
+
+														
+
+													}
+													
+												} else if (dy ==0) {
+													
+													for (var i=x+dx; i<vx; i=i+dx) {													
+													console.log('黒ふぉｒｒ');
+													if (board[i][y] == White) {
+														console.log('い');
+														board[i][y] = Black;
+													} else {
+														console.log('白ねえから');
+													}
+												}
+
+												} else {
+													for (var i=x+dx; i<vx; i=i+dx) {
+													for (var j=y+dy; j<vy; j=j+dy) {
+														console.log('黒ふぉｒｒ');
+														if (board[i][j] == White) {
+															console.log('い');
+															board[i][j] = Black;
+														} else {
+															console.log('黒ねえから');
+														}
+
+														
+
+													}
+												}
+
+												}
+												break;
+												
+
+
+												/*
+												if (board[i-dx][j-dy] == None) {
+													board[i-dx][j-dy] = Red;
+													console.log('     RED', i-dx, ':', j-dy);
+												}
+												*/
+												
+												
+											} else if (board[vx][vy] == Wall) {
+												console.log('う');	
+												break;
+											} else {
+												vx += dx;
+											    vy += dy;
+
+											}
+											
+
+											
+											
+										}
+									} 
+									/*else if (board[vx][vy] == White) {
+										 
+										if (board[i-dx][i-dy] == None) {
+											board[i-dx][j-dy] = Red;
+											console.log('Points:', vx, ':', vy);
+											console.log('     RED', i-dx, j-dy);
+										}
+										
+									}*/
+								}
+								console.log('--------------------------------------');
+
+							}
+
+
+				}
+			}
+
+			function judge() {
+				if (obj == White) {
+				// offense White 攻め
+
+				cnt = 0;
+				for (var i=1; i<9; i++) { // i = X
+					for (var j=1; j<9; j++) { // j = y
+
+
+						// find Black
+						if (board[i][j] == Black) {
+							console.log('FindBlacki, j', i, ':', j);
+							// クリア
+
+
+
+							for (var dx=-1; dx<2; dx++) { // dx (direction X) 移動方向 X軸
+								for (var dy=-1; dy<2; dy++) {
+									vx = i+dx;
+									vy = j+dy;
+									if (board[vx][vy] == Black) {
+										console.log('White find Black:', vx, ':', vy);
+										while (dx>9) {
+											if (board[vx][vy] == White) {
+												console.log('Points:', vx, vy);
+												if (board[i-dx][j-dy] == None) {
+													board[i-dx][j-dy] = Red;
+													console.log('     RED', i-dx, ':', j-dy);
+												}
+												
+												break;
+											} else if (board[vx][vy] == Wall) {
+												break;
+											}
+											vx += dx;
+											vy += dy;
+
+											
+											
+										}
+									} else if (board[vx][vy] == White) {
+										 
+										if (board[i-dx][i-dy] == None) {
+											board[i-dx][j-dy] = Red;
+											console.log('Points:', vx, ':', vy);
+											console.log('     RED', i-dx, j-dy);
+										}
+										
+									}
+									console.log('------------------------');
+								}
+
+							}
+
+						}
+
+
+					}
+
+				} 
+			    } else if (obj == Black) {
+				// offense Black 攻め
+
+				
+
+				cnt = 0;
+				for (var i=1; i<9; i++) { // i = X
+					for (var j=1; j<9; j++) { // j = y
+
+
+						// find White
+						if (board[i][j] == White) {
+							console.log('FindWhite; i, j', i, ':', j);
+							// i,j は盤面すべてから白を探して見つけた座標
+						    // クリア
+
+
+
+							for (var dx=-1; dx<2; dx++) { // dx (direction X) 移動方向 X軸
+								for (var dy=-1; dy<2; dy++) {
+									vx = i+dx;
+									vy = j+dy;
+									if (board[vx][vy] == White) {
+										console.log('Black find White:', vx, ':', vy);
+										while (dx>9) {
+											if (board[vx][vy] == Black) {
+												if (board[i-dx][i-dy] == None) {
+													console.log('Points:', vx, vy);
+												    board[i-dx][j-dy] = Red;
+													console.log('     RED', i-dx, ':', j-dy);
+
+												} 
+												
+												break;
+											}  else if (board[vx][vy] == Wall) {
+												break;
+											}
+											vx += dx;
+											vy += dy;
+											
+											
+										}
+									} else if (board[vx][vy] == Black) {
+										
+										if (board[i-dx][j-dy] == None) {
+											console.log('Points:', vx, vy);
+											console.log('     RED', i-dx, ':', j-dy);
+											board[i-dx][j-dy] = Red;
+
+										}
+
+									}
+									console.log('------------------------');
+								}
+
+							}
+
+						}
+
+
+					}
+
+				} 
+			}
+			}
+
+			function format() {
+				for (var i=1; i<9; i++) {
+					for (var j=1; j<9; j++) {
+						if (board[i][j] == Red) {
+							board[i][j] = None;
+						}
+					}
+				}
+			}
+
+			function finish() {
+				for (var i=1; i<9; i++) {
+					for (var j=1; j<9; j++) {
+						if (board[i][j] == None) {
+							cnt += 1;
+						}
+					}
+				}
+
+				if (cnt ==0) {
+					Finish = true;
+				}
+			}
+
+			
+
+
+		
+
+
+
+            /* 初期
+            if (obj == White) {
+                // 白の場合
+                cnt = 0;
+                for (var i=1; i<9; i++) {
+                    for(var j=1; j<9; j++) {
+                        if (board[i][j] == White) {
+                            console.log('White:', i, ',', j);
+                            for (var v=-1; v<2; v++) {
+                                for (var w=-1; w<2; w++) {
+                                    if (board[i+v][j+w] == Black) {
+                                        cnt++
+                                        board[i+v][j+w] = Red; // 置ける場所を赤い🔶にする。
+                                        //白を見つける-----
+                                        nx = i+v;
+                                        ny = j+w;
+
+                                        while(true) {
+                                            if (board[nx][ny] == White) {
+                                                break;
+                                            }
+                                            nx++;
+                                            ny++;
+
+                                        }
+                                        //-----------------
+                                        console.log('versus:',nx, ny);s
+                                    
+
+                                        a = 'x'+cnt;
+                                        pos[a] = i+v;
+                                        a = 'y'+cnt;
+                                        pos[a] = j+w;
+                                        
+                                        console.log('Red:', i+v, j+w);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                // 黒の場合
+                cnt = 0;
+                for (var i=1; i<9; i++) {
+                    for(var j=1; j<9; j++) {
+                        if (board[i][j] == Black) {
+                            console.log('White:', i, ',', j);
+                            for (var v=-1; v<2; v++) {
+                                for (var w=-1; w<2; w++) {
+                                    if (board[i+v][j+w] == White) {
+                                        cnt++
+                                        board[i+v][j+w] = Red; // 置ける場所を赤い🔶にする。
+                                        //黒を見つける----------
+
+                                        nx = i+v;
+                                        ny = j+w;
+
+                                        while(true) {
+                                            if (board[nx][ny] == Black) {
+                                                break;
+                                            } else if (board[nx][ny] == Wall) {
+                                                console.log('errer');
+                                                break;
+
+                                            }
+                                            nx = nx+w;
+                                            ny = ny+v;
+                                          
+
+                                        }
+                                        //------------------------
+                                        console.log('versus', nx, ny);
+                                        
+                                       
+
+                                        a = 'x'+cnt;
+                                        pos[a] = i+v;
+                                        a = 'y'+cnt;
+                                        pos[a] = j+w;
+                                        
+                                        console.log('Red:', i+v, j+w);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            
+			board[x][y] = obj ;
+            console.log('x:', x, 'y:', y);
+
+            // console.log('pos:', pos.value());
+
+			*/
+
+			
+            
+
+            
+
+
+
+			
+
+			// 盤面の表示
+			board_display() ;
+			// 入力フォームを消す
+			document.input.X.value="" ;
+			document.input.Y.value="" ;
+		}
+		// ------------------------------------
+		/*
+		ルール
+		１　黒と白
+		２　同じ色で一列に挟める場所以外は置けない（複数方向に適応可能、八方向）
+		３　対色の駒がおいてあると同じ座標には置けない
+		４　同じ色で挟まれると色が対色になる
+		５　置けないとパスとなる
+		６　一方色が置けなくなるか盤面のすべてのマスが埋まることによってゲーム終了
+		７　最終で駒の数が多かった方が勝者となる
+
+		*/
+		/*
+		１　駒がおいてあるかの確認
+		　１．５　盤面すべてのマスからの検索
+		　　　　１　原点の座標からの八方向への検索（原点からの反対色探し）、記録（）
+		　　　　２　検索結果からの０、WALLまでの検索（原点からのルート探し）
+		　　　　３　ヒットなら原点を赤にする　
+		　1.5　ver2　対色からの検索
+		　　　　１　原点の座標からの八方向への検索（原点からの反対色探し）、記録（）
+		　　　　２　検索結果からの０、WALLまでの検索（原点からのルート探し）
+		　　　　３　ヒットなら原点を赤にする　
+		　　　　
+		　　　　
+
+		２　駒がおけるかのジャッチ
+		　１　マスが赤なら置ける、それ以外は置けない
+		　２　駒が置かれたらルートの色を変える
+		　３　
+		　
+		何かわからんメモ
+		red d={}[]-1,0,-1,1,-1,-1,0,-1,0,-1,1,1,-1,0,1
+		redのflag==0?入れる
+		ハートでオセロのコマ消える
+
+		
+		*/
+		</script>
+	</head>
+	<!-- HTMLが読み込まれたら initialize() で初期化 -->
+	<body onLoad="initialize()">
+
+		<h1>簡単なオセロ</h1>
+
+		<h2>出力</h2>
+		<!-- 以下のdivタグの中身を board_display() で書き換える -->
+		<div id="BOARD"></div>
+
+		<h2>入力</h2>
+		<!-- onClickでコマを置く処理を呼び出す -->
+		<form name="input">
+			X:<input type="text" name="X" size="10" />、
+			Y:<input type="text" name="Y" size="10" />
+			<input type="button" name="XY" value="置く" onClick="exec()" />
+		</form>
+	</body>
+</html>
+
+<!-- 
+    for (let x=0, y=0; x<10; x++, y++) {
+
+    }
+
+    // コンマ演算子
+    （処理１, 処理２）
+    処理１が終わると処理２を実行
+ -->
